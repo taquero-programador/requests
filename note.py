@@ -192,3 +192,55 @@ Rango de códigos
 4xx: error del cliente
 5xx: error del servidor
 """
+# endpoints. url publicas para acceder a los recursos de un servicio web
+"""
+Ejemplo de endpoints
+GET: /customers - obtiene una lista de clientes
+GET: /customers/<customer_id> - obtiene un solo cliente
+POST: /customers - crea un nuevo cliente
+PUT: /customers/<customer_id> - actualiza un cliente
+PATCH - /customers/<customer_id> - actualiza parcialmente un cliente
+DELETE: /customers/customer_id<> - elimina un cliente
+
+cada uno de los enpoints realiza una acción diferente.
+
+en los puntos finales <customer_id> esto significa que tiene que pasar un valor a trabajar.
+
+esto es solo un ejemplo en algunos casos pueden ser cientos de endpoints
+"""
+
+# GET. este metodo permite recuperar los recuros de la API, es de solo lectura y no se debe usar para modificar
+# https://jsonplaceholder.typicode.com/ proporciona endpoints falsos para pruebas
+
+import requests
+
+url = "https://jsonplaceholder.typicode.com/todos/1"
+r = requests.get(url)
+print(r.json())
+print(r.status_code)
+print(r.headers['content-type'])
+
+# POST. enviar informacion al post
+url = "https://jsonplaceholder.typicode.com/todos"
+todo = {
+    'userId': 1,
+    'title': 'Buy milk',
+    'completed': False
+}
+r = requests.post(url, data=todo)
+print(r.json()) # retorna una sola linea en dict
+print(r.text) # retorna un dict de varias linea k:v
+# si no se pasa el argumento json se tiene que especificar 'Content-type'
+# si no se importa json
+import requests
+import json
+
+url = "https://jsonplaceholder.typicode.com/todos"
+todo = {
+    'userId': 1,
+    'title': 'Buy milk',
+    'completed': False
+}
+headers = {'Content-Tyep': 'application/json'}
+r = requests.post(url, data=json.dumps(todo), headers=headers)
+print(r.text)

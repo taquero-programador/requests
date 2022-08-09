@@ -2,10 +2,13 @@
 
 import requests
 import json
-# from PIL import Image
-# from io import BytesIO
 
 
-url = 'https://api.github.com/users/taquero-programador'
-r = requests.get(url)
-print(r.text)
+url = "https://jsonplaceholder.typicode.com/todos"
+todo = {
+    'userId': 1,
+    'title': 'Buy milk',
+    'completed': False
+}
+r = requests.post(url, data=json.dumps(todo), headers={'Content-Type': 'application/json'})
+print(r.text, r.status_code)

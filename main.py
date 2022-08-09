@@ -6,7 +6,6 @@ import json
 # from io import BytesIO
 
 
-url = 'https://httpbin.org/cookies'
-cookies = dict(cookies_are='working')
-r = requests.get(url, cookies=cookies)
+url = 'https://api.github.com/users/taquero-programador'
+r = requests.get(url)
 print(r.text)

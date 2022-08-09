@@ -161,5 +161,28 @@ url = 'https://httpbin.org/cookies'
 cookies = dict(cookies_are='working')
 r = requests.get(url, cookies=cookies)
 print(r.text) # retorna un dict
+# ------------------------------------------------------
+# realpython api rest
 
+# acceder a la info de un usuario en github
+url = 'https://api.github.com/users/'
+"""
+metodos HTTP
+GET: recupera recursos existentes
+POST: crear un nuevo recurso
+PUT: actualiza un recurso existente
+PATCH: actualiza parcialmente un recurso existentes
+DELETE: elimina un recurso
 
+Codigós de estado
+200: OK - accion solicitada exitosa
+201: CREATED: se creó un nuevo recurso
+202: Accepted: solicitud exitosa, sin peticiones
+204: No Content: exitosa, respuesta sin contenido
+400: Bad Request: solicitud mal formulada
+401: Unauthorized: cliente no autorizado para la accion solicitada
+404: Not Found: no se encontro el recurso
+415: Unsupported Media Type: formato de datos con compatible con el servidor
+422: Unprocessable Entity: datos de solicitud en formato correcto, pero con datos invalido o faltantes
+500: Internal Server Error: servidor arrojo un error al procesar la solicitud
+"""

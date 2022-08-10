@@ -1,10 +1,15 @@
 #!/usr/bin/env python3
 
+
 import requests
-#import json
+import json
 
-url = 'https://httpbin.org/post'
-fil = {'file': open('foo.png', 'rb'), 'file2': open('bar.png', 'rb')}
+url = 'https://api.github.com/repos/psf/requests/issues/482'
+r = requests.get(url)
+print(r.status_code)
 
-r = requests.post(url, files=fil)
-print(r.text)
+issue = json.loads(r.text)
+print(issue['title'])
+print(issue['comments'])
+for k,v in issue.items():
+    print(v)

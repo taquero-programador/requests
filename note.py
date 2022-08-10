@@ -342,9 +342,128 @@ r = Request.post(url, files=files)
 print(r.text)
 # en ambos casos debe retornar un parte que dice multipart/form-data
 
-# hooks de eventos.
+# hooks de eventos. manipular parte de proceso o el manejo de eventos
+# reponse: respuesta generada a partir de una solicitud pasando un diccionario
+hooks = {'response': print_url}
+# callback_function recibe una porcion de datos como primer argumento
+def print_url(r, *args, **kwargs):
+    print(r.url)
 
+# se deben controlar las excepciones
+# si la funcion devuelve un valor, es porque reemplazara los datos que se pasaron
+def record_hook(r, *args, **kwargs):
+    r.hook_called = True
+    return r
+# imprimir argumentos en tiempo de solicitud
+url = 'https://httpbin.org/'
+r = requests.get(url, hooks={'response': print_url})
+print(r)
+# añadir multiples hooks
+r = requests.get(url, hooks={'reponse': [print_url, record_called]})
+print(r.hook_called)
+# agragar hooks en Session()
+s = Request.Session()
+s.hooks['response'].append(print_url)
+r = s.get('https://httpbin.org/')
+print(r)
 
+"""
+autenticación personalizada
+un argumento auth se podra modificar antes de ser enviado.
+
+ejemplo donde un servicio web solo responde si 'X-Pizza' esta en el encabezado.
+"""
+from Request.auth import AuthBase
+
+class PizzaAuth(AuthBase):
+    def __init__(self, username):
+        self.username = username
+
+    def __call__(self, r):
+        r.headers['X-Pizza'] = self.username
+        return r
+# lanzar la solicitud usando PizzaAuth
+url = 'http://pizzabin.org/admin'
+r = Request.get(url, auth=PizzaAuth('kenneth'))
+print(r)
+
+# solicitudes de transmision. con Response.iter_line se puede iterar sobre una api de twitter
+# usar stream=True sobre el request y usar .iter_lines()
+import json
+import requests
+
+url = 'https://httpbin.org/stream/20'
+r = Request.get(url, stream=True)
+
+for line in r.iter_lines():
+    if line:
+        decode_line = line.code('utf-8')
+        print(json.loads(decode_line))
+
+# proporcionar una codificación en caso de que el servidor no la de
+url = 'https://httpbin.org/stream/20'
+r = Request.get(url, stream=True)
+
+if r.encoding is None:
+    r.encoding = 'utf-8'
+
+for line in r.iter_lines():
+    if line:
+        print(json.loads(line))
+
+# proxies. crear un diccionarion y pasarlo como argumento de proxies dentro del requests
+import requests
+
+proxies = {
+    'http': 'http://10.10.1.10:3128',
+    'https': 'http://10.10.1.10:1080'
+}
+
+r = requests.get('example.com', proxies=proxies)
+print(r)
+# configurarlo para toda la sesión de manera persistente
+se = Request.Session()
+se.proxies.update(proxies)
+r = se.get(url)
+print(r)
+# socks. requiere libreria de terceros
+python3 -m pip3 install requests[socks]
+# usar proxy socks
+proxies = {
+    'http': 'socks5://user:pass@host:port',
+    'https': 'socks5://user_pass@host:port'
+}
+# requests proporciona casi la gama completa de respuestas HTTP.
+# HTTP GET
+import requests
+
+url = 'https://api.github.com/repos/psf/requests/git/commits/a050faf084662f3a352dd1a941f2c7c9f886d4ad'
+r = requests.get(url)
+# confirmar la respues
+if r.status_code = requests.codes.ok:
+    print(r.headers['Content-type'])
+# de ser correcto es status_code retornara el encabezado
+# github retorna un JSON, se puede manejar con r.json()
+commit = r.json()
+print(commit.keys()) # retorna las llaves
+print(commit['committer']) # retorna el valor de commiter
+print(commit['message'])
+# usar el metodo .options para ver los tipos HTTP compatibles con la URL
+verbs = requests.options(r.url)
+print(verbs.status_code)
+# no retorna los metodos pues gh no implmenta options
+print(verbs.headers['allow']) # retorna los metodos disponibles
+# probrar 482 git
+import requests
+import json
+url = 'https://api.github.com/repos/psf/requests/issues/482'
+r = requests.get(url)
+print(r.status_code)
+issue = json.loader(r.text)
+print(issue['title'])
+print(issue['comments'])
+# en comments tenemos 3 comentarios
+r = requests.get()
 
 # ------------------------------------------------------
 # realpython api rest

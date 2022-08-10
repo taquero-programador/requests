@@ -727,5 +727,89 @@ GET /guests?event_id=23
 
 """
 respuesta de éxito en la respuesta.
+como responderan las solicitudes, deben de tener el mismo formato e incluir el estado de respuesta HTTP correcto
+"""
+
+get /cars http/1.1
+Host: api.example.com
+"""
+la solicitud se comport de cuatro partes:
+1 GET es el tipo de metodo HTTP
+2 /cars es el endpoint de la API
+3 HTTP/1.1 es la version HTTP
+4 Host: api.example.com es el host de la API
+"""
+# formato JSON en APi
+HTTP/1.1 200 OK
+Content-Type: application/json
+...
+
+[
+    {
+        "id": 1,
+        "make": "GMC",
+        "model": "1500 Club Coupe",
+        "year": 1998,
+        "vin": "1D7RV1GTXAS806941",
+        "color": "Red"
+    },
+    {
+        "id": 2,
+        "make": "Lamborghini",
+        "model":"Gallardo",
+        "year":2006,
+        "vin":"JN1BY1PR0FM736887",
+        "color":"Mauve"
+    },
+    {
+        "id": 3,
+        "make": "Chevrolet",
+        "model":"Monte Carlo",
+        "year":1996,
+        "vin":"1G4HP54K714224234",
+        "color":"Violet"
+    }
+]
 
 """
+REST y Python: herramientas. ejemplo de adminstrar una colección de paises
+cada pais tendra los siguientes campos:
+name - nombre del pais
+capitales - capital del pais
+area - área del pais en kilometros
+
+la mayoria de los casos, los datos recibidos de una API provienen de una base de datos.
+para este caso se usara una lista para almacenar los datos
+
+usar countries como un endpoint y mantener el formato en json
+"""
+
+# flask
+from flask import Flask, requestm jsonify
+
+app = Flask(__name__)
+
+countries = [
+    {'id': 1, 'name': 'Tailandia', 'capital': 'Bangkok', 'area': 51312},
+    {'id': 2, 'name': 'Australia', 'capital': 'Canberra', 'area': 761},
+    {'id': 3, 'name': 'Egipto': 'capital': 'Cairo', 'area': 1010408},
+]
+
+def _find_next_id():
+    return max(country['id'] for country in countries) +1
+
+@app.get)'/countries'
+def get_countries():
+    return jsonify(countries)
+
+@app.post('/countries')
+def add_country():
+    if request.is_json:
+        country = request.get_json()
+        country['id'] = _find_next_id()
+        countries.append(country)
+        return country, 201
+    return {'error': 'Request must be JSON'}, 415
+
+export FLASK_APP=main.py
+export FLASK_ENV=development

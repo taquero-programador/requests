@@ -1,24 +1,27 @@
 #!/usr/bin/env python3
 
-import requests
+from flask import Flask, request, jsonify
 
-api_url = "https://jsonplaceholder.typicode.com/todos/10"
-r = requests.get(api_url)
-print(r.json())
+app = Flask(__name__)
 
-todo = {
-    'userId': 1,
-    'title': 'Wash car',
-    'completed': True
-}
-r = requests.put(api_url, json=todo)
-print(r.json())
-print(r.status_code)
+countries = [
+    {'id': 1, 'name': 'Tailandia', 'capital': 'Bangkok', 'area': 51312},
+    {'id': 2, 'name': 'Australia', 'capital': 'Canberra', 'area': 76100},
+    {'id': 3, 'name': 'Egipot', 'capital': 'Cairo', 'area': 1010408},
+]
 
-todo = {'title': 'Mow lawn'}
-r = requests.patch(api_url, json=todo)
-print(r.json())
+def _find_next_id():
+    return max(country['id'] for country in countries) +1
 
-r = requests.delete(api_url)
-print(r.json())
-print(r.status_code)
+@app.get('/countries')
+def get_countries():
+    return jsonify(countries)
+
+@app.post('/countries')
+def add_country():
+    if request.is_json:
+        country = request.get_json()
+        country['id'] = _find_next_id()
+        countries.append(country)
+        return country, 201
+    return {'error': 'Request must be JSON'}, 415

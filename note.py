@@ -530,10 +530,6 @@ auth = OAuth1('YOUR_APP_KEY', 'YOUR_APP_SECRET',
 r = requests.get(url, auth=auth)
 print(r) # reponse 200
 
-
-
-
-
 # ------------------------------------------------------
 # realpython api rest
 
@@ -617,3 +613,119 @@ todo = {
 headers = {'Content-Tyep': 'application/json'}
 r = requests.post(url, data=json.dumps(todo), headers=headers)
 print(r.text)
+print(r.status_code)
+# PUT. actualizar un elemento
+import requests
+
+api_url = "https://jsonplaceholder.typicode.com/todos/10"
+r = requests.get(url, )
+print(r.json)
+# pasar el metodo PUTS
+todo = {
+    'userId': 1,
+    'title': 'Wash car',
+    'completed': True
+}
+r = requests.put(api_url, json=todo)
+print(r.json())
+print(r.status_code)
+# primero recuera un recurso de la api y con put actualiza ese recurso
+# PATCH. para modificar un recurso pero no reemplaza completamente el recurso, solo actualiza
+# los valores establecido en el json
+todo = {'title': 'Mow lawn'}
+r = requests.patch(url, json=todo)
+print(r.json())
+# ejecuta get, crear un nuevo recurso y despues actualiza parcialmente el recurso
+
+# delete. eliminar por completo un recurso
+import requests
+
+api_url = "https://jsonplaceholder.typicode.com/todos/10"
+r = requests.delete(api_url)
+print(r.json())
+print(r.status_code)
+
+"""
+REST y python: creación de API's
+identificar recursos.
+el primer paso para crear API's es identificar los recursos que administraran la API.
+a medida que se identifiquen los recursos, crear una lista de sustantivo que describan los
+diferente datos que los usarios pueden identificar.
+
+considerar cualquier recurso anidado. establecer jerarquias de los recursos ayuda
+a la definicion de los endpoint
+"""
+
+"""
+definir puntos finales
+una vez que se indentifiquen los recursos es momento para definir los endpoints
+definicion de algunos endpoints de transaction
+
+GET: /transactions - obtiene una lista de transacciones
+GET: /transactions/<transaction_id> - obtiene una sola transacción
+POST: /transactions - crea una nueva transaccón
+PUS: /transactions/<transaction_id> - actualiza una sola transacción
+PATCH: /transactions/<transaction_id> - actualiza de manera parcial un transacción
+DELETE: /transactions/<transaction_id> - elimina una transacción
+
+recursos anidados de endpoint.
+GET: /events/<event_id>/guests - consigue una lista de invitados
+GET: /events/<event_id>/guests/<guest_id> - obtiene un solo invitado
+POST: /events/<event_id>/guests - crea un nuevo invitado
+PUT: /events/<event_id>/guests/<guest_id> - actualiza un invitado
+PATCH: /events/<event_id>/guests/<guest_id> - actualiza de manera parcial un recurso
+DELETE: /events/<event_id>/guests/<guest_id> - elimina un invitado
+
+con esos endpoints puede administrar guests para eventos especificos del sistema
+"""
+
+# usar cadenas permite enviar paramatros adicionales con la solicitud HTTP.
+GET /guests?event_id=23
+
+# las dos opciones a elejir es XML y JSON, pero el que mejor se integra es JSON
+# formato de libro con XML:
+<?xml version="1.0" encoding="UTF-8" ?>
+<book>
+    <title>Python Basics</title>
+    <page_count>635</page_count>
+    <pub_date>2021-03-16</pub_date>
+    <authors>
+        <author>
+            <name>David Amos</name>
+        </author>
+        <author>
+            <name>Joanna Jablonski</name>
+        </author>
+        <author>
+            <name>Dan Bader</name>
+        </author>
+        <author>
+            <name>Fletcher Heisler</name>
+        </author>
+    </authors>
+    <isbn13>978-1775093329</isbn13>
+    <genre>Education</genre>
+</book>
+
+# XML utiliza un sistema de etiquetas como contenedor de datos
+
+# ejemplo con JSON
+{
+    "title": "Python Basics",
+    "page_count": 635,
+    "pub_date": "2021-03-16",
+    "authors": [
+        {"name": "David Amos"},
+        {"name": "Joanna Jablonski"},
+        {"name": "Dan Bader"},
+        {"name": "Fletcher Heisler"}
+    ],
+    "isbn13": "978-1775093329",
+    "genre": "Education"
+}
+# JSON almacena datos en pare key: value.
+
+"""
+respuesta de éxito en la respuesta.
+
+"""

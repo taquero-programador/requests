@@ -161,6 +161,191 @@ url = 'https://httpbin.org/cookies'
 cookies = dict(cookies_are='working')
 r = requests.get(url, cookies=cookies)
 print(r.text) # retorna un dict
+# las cookies devuelven un RequestsCookieJar(), que actua como un diccionarion para uso multiple en dominios o rutas
+jar = requests.cookies.RequestsCookieJar()
+jar.set('tasty_cookie', 'yum', domain='httpbin.org', path='/cookies')
+jar.set('gross_cookie', 'blech', domain='httpbin.org', path='/elsewhere')
+url = 'https://httpbin.org/cookies'
+r = requests.get(url, cookies=jar)
+r.text
+# redirección e historial. usar la propiedad history para rastrear la redirección y completar la solicitud
+# github redirije las solicitudes HTTP a HTTPS
+r = requests.get('http://github.com/')
+print(r.url)
+print(r.status_code)
+print(r.historial)
+# si utiliza algun tipo de requests se puede desactivar con con el parametro allow_redirects
+r = requests.get('http://github.com/', allow_redirects=False)
+print(r.status_code)
+print(r.history)
+# lo que hace es deactivar la redireccion y retorna una url de HTTP
+# al estar en head se puede habilitar
+r = requests.head('http://github.com/', allow_redirects=False)
+print(r.url)
+print(r.status_code)
+print(history)
+# timesouts. puede pasar una argumento timeoutque le indique a la solicitus esperar un tiempo determinado
+# en código de producción debe de implementarse
+r = requests.get('http://github.com/', timeout=0.001)
+print(r)
+# requests advanced
+"""
+objetos de sesión
+Session perimte persistir ciertos datos, tambien persiste los datos de as cookies.
+un metodo session tiene todas las peticiones principales de API. se apoya de urllib3
+"""
+# persistir alguna cookies de la solicitud
+s = requests.Session()
+s.get('https://httpbin.org/cookies/set/sessioncookie/123456789')
+r = s.get('https://httpbin.org/cookies')
+print(r.text)
+# tambien se puede usar para pasar datos predeterminados
+s = requests.Session()
+s.auth = ('user', 'pass')
+s.headers.update({'x-test': 'true'})
+s.get('https://httpbin.org/headers', headers={'x-test': 'true'})
+# cualquier diccionario que se pase como metodo se fucionara con el valor de nivel session.
+
+# los parametros de nivel metodo no persisten, por lo que se enviara en la primera solicitud pero no en la seguna
+s = requests.Session()
+r = s.get('https://httpbin.org/cookies', cookies={'from-my': 'browser'})
+print(r.text)
+
+r = s.get('https://httpbin.org/cookies')
+print(r.text)
+# para añadir manualmente cookies a la sesión usar la funcion Session.cookies
+
+# la sesiones tambien se pueden usar como adminstradores de contexto
+with requests.Session() as s:
+    s.get('https://httpbin.org/cookies/set/sessioncookie/123456789')
+# con eso se asegura de termina el proceso cuando salga del bucle
+"""
+objetos de solicitus y respuesta
+cuando se llama a Request.get(), primero construye un requests que sera enviado
+para solicita o consultar un recurso. en segundo lugar genera un Response que
+se obtiene de la respuesta del servidor
+"""
+# solicitud para obtener informacion de wikipedia
+url = 'https://en.wikipedia.org/wiki/Monty_Python'
+r = request.get(url)
+# acceder a los encabezados
+print(r.headers)
+# solicitud del encabezado
+print(r.request.headers)
+# solicitudes preparadas. trabajar directamente con el cuerpo o encabezado
+from requests import Request, Session
+
+s = Session()
+req = Request('POST', url, data=data, headers=headers)
+prepped = req.prepare()
+
+prepped.body = 'this body'
+del prepped.headers['Content-Type']
+resp = s.send(prepped,
+    stream=stream,
+    verify=verfy,
+    proxies=proxies,
+    cert=cert,
+    timeout=timeout
+)
+print(resp.status_code)
+#
+from requests import Request, Session
+
+s = Session()
+req = Request('GET',  url, data=data, headers=headers)
+
+prepped = s.prepare_request(req)
+
+# do something with prepped.body
+prepped.body = 'Seriously, send exactly these bytes.'
+
+# do something with prepped.headers
+prepped.headers['Keep-Dead'] = 'parrot'
+
+resp = s.send(prepped,
+    stream=stream,
+    verify=verify,
+    proxies=proxies,
+    cert=cert,
+    timeout=timeout
+)
+#
+from requests import Request, Session
+
+s = Session()
+req = Request('GET', url)
+
+prepped = s.prepare_request(req)
+
+# Merge environment settings into session
+settings = s.merge_environment_settings(prepped.url, {}, None, None, None)
+resp = s.send(prepped, **settings)
+
+print(resp.status_code)
+# verificacion de certificados SSL. por defecto esta deshabiliatado
+import requests
+url = 'https://requestb.in'
+r = Request.get(url)
+print(r.text)
+# retorna error y status code 200 al no poder verificar el certificado
+# pasar verify con la ruta de archivo
+Request.get(url, verify='path/cert')
+# de manera persistente
+s = Request.Session()
+s.verify = 'path/cert'
+# ingorar la verifiacion de SSL
+url = 'https://requestb.in'
+r = requests.get('https://requestb.in', verify=False)
+print(r.text)
+# deshabilitar la verificacion puede presentar serios problemas de vulnerabilidad
+
+# certificados del lado del cliente. usar un certificado local de clave privada y certificado.
+Request.get(url, cert=('path/cert.cert', 'path/cert.key'))
+# persistente
+s = requests.Session()
+s.cert = 'path/file.cert'
+
+# certificados CA. flujo de trabajo del contenido, de manera automatica descarga
+# el cuerpo de la respuesta, esto puede ser anulado, con el parametro stream
+url = 'https://github.com/psf/requests/tarball/main'
+r = Request.get(url, stream=True)
+print(r.text)
+# esto mantiene la conexion abierta y no permite condicionar la recuperación del contenid
+with open('massive-body', 'rb') as f:
+    requests.post('http://some.url/streamed', data=f)
+# solicitudes codificadas de fragmentos. permite fragmentos de solicitudes entrantes y salientes
+# pasar un generador sin longitud
+def gen():
+    yield 'hi'
+    yield 'there'
+
+requests.post(url, data=gen())
+
+# POST multiples archivos codificados en varias partes.
+# enviar varios en una sola colicitud. cargar varias imagenes en un formulario
+<input type="file" name="images" multiple="true" required="true"/>
+
+# manera explicita
+url = 'https://httpbin.org/post'
+multiple_files = [
+
+    ('images', ('foo.png', open('foo.png', 'rb'), 'image/png')),
+
+    ('images', ('bar.png', open('bar.png', 'rb'), 'image/png'))]
+
+r = requests.post(url, files=multiple_files)
+print(r.text)
+# usando un diccionario, es más corto
+files = {'file1': open('foo.png', 'rb'), 'file2': open('bar.png', 'rb')}
+r = Request.post(url, files=files)
+print(r.text)
+# en ambos casos debe retornar un parte que dice multipart/form-data
+
+# hooks de eventos.
+
+
+
 # ------------------------------------------------------
 # realpython api rest
 

@@ -1,14 +1,10 @@
 #!/usr/bin/env python3
 
 import requests
-import json
+#import json
 
+url = 'https://httpbin.org/post'
+fil = {'file': open('foo.png', 'rb'), 'file2': open('bar.png', 'rb')}
 
-url = "https://jsonplaceholder.typicode.com/todos"
-todo = {
-    'userId': 1,
-    'title': 'Buy milk',
-    'completed': False
-}
-r = requests.post(url, data=json.dumps(todo), headers={'Content-Type': 'application/json'})
-print(r.text, r.status_code)
+r = requests.post(url, files=fil)
+print(r.text)

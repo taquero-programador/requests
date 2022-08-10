@@ -463,7 +463,41 @@ issue = json.loader(r.text)
 print(issue['title'])
 print(issue['comments'])
 # en comments tenemos 3 comentarios
-r = requests.get()
+r = requests.get(url + '/comments')
+print(r.status_code)
+comments = r.json()
+print(comments[0].keys())
+print(comments[2]['body'])
+print(comments[2]['user']['login'])
+# crear un post con mediante la API
+body = json.dumps({u"body": u"Sounds great! I'll get right on it!"})
+url = u"https://api.github.com/repos/psf/requests/issues/482/comments"
+r = requests.post(url, data=body)
+print(r.status_code)
+# retona un error 404, tal vez se requiera autenticación
+from Request.auth import HTTPBasicAuth
+
+auth = HTTPBasicAuth('fake@example.com', 'no_pass')
+r = requests.post(url, data=body, auth=auth)
+print(r.status_code)
+content = r.json()
+print(content['body']) # retorna la cadena de post
+# actualizar el post con PATCH
+print(content[u"id"])
+body = json.dumps({u"body": u"Sounds great! I'll get right on it once I feed my cat."})
+url = u"https://api.github.com/repos/psf/requests/issues/comments/5804413"
+r = requests.patch(url, data=body, auth=auth)
+print(r.status_code) # debe retornar 200, exitoso
+# eliminar
+r = requests.delete(url=url, auth=auth)
+print(r.status_code) # 204
+print(r.headers['status']) # '204 No Content'
+r = requests.head(url=url, auth=auth)
+print(r.headers)
+'x-ratelimit-remaining': '4995'
+'x-ratelimit-limit': '5000'
+
+
 
 # ------------------------------------------------------
 # realpython api rest

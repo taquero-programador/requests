@@ -824,3 +824,13 @@ curl -i http://localhost:5000/countries \
     -d '{"name": "Germany", "capital": "Berlin", "area": 357200}'
 # envia una peticion para generar un nuevo recurso, al ir a /countries lista todos incluyendo el nuevo recurso
 
+"""
+curl:
+-X: establece el metodo HTTP para la solicitud
+-H: agragar un encabezado a la solicitud
+-d: define los datos de la solicitud
+"""
+# solicitar todos los recursos desde curl GET
+curl -i http://localhost:5000/countries \
+    -X GET
+

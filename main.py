@@ -9,14 +9,14 @@ def find_next_id():
     return max(country.country for country in countries) +1
 
 class Country(BaseModel):
-    country_id: int = Field(defautl_factory=find_next_id, alias="id")
+    country_id: int = Field(default_factory=find_next_id, alias="id")
     name: str
-    capita: str
+    capital: str
     area: int
 
 countries = [
     Country(id=1, name="Tailandia", capital="Bangkok", area=513120),
-    Countyr(id=2, name="Autralia", capital="Canberra", area=7169630),
+    Country(id=2, name="Autralia", capital="Canberra", area=7169630),
     Country(id=3, name="Egipto", capital="Cairo", area=1010408)
 ]
 

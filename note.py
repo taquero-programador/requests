@@ -834,8 +834,12 @@ curl:
 curl -i http://localhost:5000/countries
 
 # FastAPI
-python3 -m pip install fastapi, pydantic
-python3 -m pip install uvicorn[standard]
+python3 -m venv ent_virt
+source ent_virt/bin/activate
+pip3 install --upgrade pip3
+python3 -m pip install fastapi pydantic
+python3 -m pip install uvicorn
+
 
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
@@ -865,4 +869,5 @@ async def get_countries:
 async def add_country(country: Country):
     countries.append(country)
     return country
-
+# uvicorn name_app:app --reaload
+# go to localhost:8000/countries

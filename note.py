@@ -813,3 +813,14 @@ def add_country():
 
 export FLASK_APP=main.py
 export FLASK_ENV=development
+# cambiar FLASK_ENV por FLASK_DEBUG
+# solicitar el endpoint /coutries retorna una lista de diccioanrios con todos los elementos
+# pasar un argumento en la url?id=2
+
+# enviar solicitudes desde cli con curl
+curl -i http://localhost:5000/countries \
+    -X POST \
+    -H 'Content-Type: application/json' \
+    -d '{"name": "Germany", "capital": "Berlin", "area": 357200}'
+# envia una peticion para generar un nuevo recurso, al ir a /countries lista todos incluyendo el nuevo recurso
+

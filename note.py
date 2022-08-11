@@ -881,3 +881,34 @@ curl -i http://localhost:8000/countries \
     -H 'Content-Type: application/json' \
     -d '{"name": "Alemania", "capital": "Berlin", "area": 357022}' \
     -w '\n'
+
+# request corey shafer
+import requests
+
+url = 'https://xkcd/353/'
+r = requests.get(url)
+print(r)
+print(r.text)
+# obtener una imagen
+url = 'https://imgs.xkcd.com/comics/python.png'
+r = requests.get(url)
+
+with open('python.png', 'wb') as f:
+    f.write(r.content)
+# usar httpbin.org
+url = 'https://httpbin.org/get'
+r = requests.get(url)
+print(r.headers)
+# pasar argumetos en get
+payload = {'page': 2, 'count': 23}
+r = requests.get(url, params=paylaod)
+print(r.text)
+print(r.url) # retorna la url con los valores despues de ?
+# crear un nuevo recurso con post
+payload = {'username': 'corey', 'password': 'testing'}
+r = requests.post(url, data=payload)
+print(r.text)
+# acceder a los valores como un dict usando .json()
+r_dict = r.json()
+print8r_dict['form']
+

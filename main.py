@@ -1,30 +1,10 @@
 #!/usr/bin/env python3
 
-from fastapi import FastAPI
-from pydantic import BaseModel, Field
+import requests
 
-app = FastAPI()
+payload = {'username': 'corey', 'password': 'testing'}
+url = 'https://httpbin.org/post'
+r = requests.post(url, data=payload)
 
-def _find_next_id():
-    return max(country.country_id for country in countries) +1
-
-class Country(BaseModel):
-    country_id: int = Field(default_factory=_find_next_id, alias="id")
-    name: str
-    capital: str
-    area: int
-
-countries = [
-    Country(id=1, name="Tailandia", capital="Bangkok", area=513120),
-    Country(id=2, name="Autralia", capital="Canberra", area=7169630),
-    Country(id=3, name="Egipto", capital="Cairo", area=1010408)
-]
-
-@app.get("/countries")
-async def get_countries():
-    return countries
-
-@app.post("/countries", status_code=201)
-async def add_country(country: Country):
-    countries.append(country)
-    return country
+r_dict = r.json()
+print(r_dict['form'])

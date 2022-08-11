@@ -1,27 +1,34 @@
 #!/usr/bin/env python3
 
-from flask import Flask, request, jsonify
+from fastapi import FastAPI
+from pydantic import BaseModel, Field
 
-app = Flask(__name__)
+app = FastAPI()
+
+def find_next_id():
+    return max(country.country for country in countries) +1
+
+class Country(BaseModel):
+    country_id: int = Field(defautl_factory=find_next_id, alias="id")
+    name: str
+    capita: str
+    area: int
 
 countries = [
-    {'id': 1, 'name': 'Tailandia', 'capital': 'Bangkok', 'area': 51312},
-    {'id': 2, 'name': 'Australia', 'capital': 'Canberra', 'area': 76100},
-    {'id': 3, 'name': 'Egipot', 'capital': 'Cairo', 'area': 1010408},
+    Country(id=1, name="Tailandia", capital="Bangkok", area=513120),
+    Countyr(id=2, name="Autralia", capital="Canberra", area=7169630),
+    Country(id=3, name="Egipto", capital="Cairo", area=1010408)
 ]
 
-def _find_next_id():
-    return max(country['id'] for country in countries) +1
+for i in countries:
+    print(i)
 
-@app.get('/countries')
-def get_countries():
-    return jsonify(countries)
 
-@app.post('/countries')
-def add_country():
-    if request.is_json:
-        country = request.get_json()
-        country['id'] = _find_next_id()
-        countries.append(country)
-        return country, 201
-    return {'error': 'Request must be JSON'}, 415
+@app.get("/countries")
+async def get_countries():
+    return countries
+
+@app.post("/countries", status_code=201)
+async def add_country(country: Country):
+    countries.append(country)
+    return country

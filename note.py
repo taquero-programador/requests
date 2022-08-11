@@ -831,6 +831,38 @@ curl:
 -d: define los datos de la solicitud
 """
 # solicitar todos los recursos desde curl GET
-curl -i http://localhost:5000/countries \
-    -X GET
+curl -i http://localhost:5000/countries
+
+# FastAPI
+python3 -m pip install fastapi, pydantic
+python3 -m pip install uvicorn[standard]
+
+from fastapi import FastAPI
+from pydantic import BaseModel, Field
+
+app = FastAPI()
+
+def find_next_id():
+    return max(country.country_id for country in countries) +1
+
+class Country(BaseModel):
+    country_id: int = Field(defacult_factory=find_next_id, alidas='id')
+    name: str
+    capital: str
+    area: int
+
+countries = [
+    Country(id=1, name="Taildandia", capital="Bangkok", area=513120),
+    Country(id=2, name="Autralia", capital="Canberra", area=7617930),
+    Country(id=3, name="Egipto", capital"Cairo", area=1010400),
+]
+
+@app.get("/countries")
+async def get_countries:
+    return countries
+
+@app.post("/countries", status_code=201)
+async def add_country(country: Country):
+    countries.append(country)
+    return country
 

@@ -834,6 +834,9 @@ curl:
 curl -i http://localhost:5000/countries
 
 # FastAPI
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+ 1289  history | grep -i "curl"
+sudo apt update -y && sudo apt install upgrade -y
 python3 -m venv ent_virt
 source ent_virt/bin/activate
 pip3 install --upgrade pip3
@@ -871,3 +874,10 @@ async def add_country(country: Country):
     return country
 # uvicorn name_app:app --reaload
 # go to localhost:8000/countries
+
+# crear un nuevo recurso desde curl
+curl -i http://localhost:8000/countries \
+    -X POST \
+    -H 'Content-Type: application/json' \
+    -d '{"name": "Alemania", "capital": "Berlin", "area": 357022}' \
+    -w '\n'

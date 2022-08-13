@@ -4,7 +4,6 @@ import requests
 from requests.auth import HTTPBasicAuth
 import csv
 import praw
-import csv
 import time
 
 inicio = time.time()
